@@ -12,9 +12,9 @@
 package com.feevale;
 
 public class Bus extends Thread {
+    private static final int CAPACITY = 50;
     private final int idBus;
     private final BusStop busStop;
-    private final int capacity = 50;
 
     public Bus(int idBus, BusStop busStop) {
         this.idBus = idBus;
@@ -26,12 +26,12 @@ public class Bus extends Thread {
     }
 
     public int getCapacity() {
-        return capacity;
+        return CAPACITY;
     }
 
     @Override
     public void run() {
         System.out.println("Ônibus " + idBus + " chegou no ponto.");
-        busStop.embarcar(this);
+        busStop.board(this);
     }
 }

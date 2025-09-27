@@ -11,11 +11,9 @@
 
 package com.feevale;
 
-import java.time.LocalTime;
-
 public class Student extends Thread {
+    private static final int TIME_GO_BUS_STOP = 100;
     private String studentName;
-    private LocalTime arrivalTimeBusStop;
     private Integer classTime;
     private BusStop busStop;
 
@@ -25,26 +23,21 @@ public class Student extends Thread {
         this.classTime = classTime;
         this.busStop = busStop;
     }
-    
+
     public String getStudentName() {
         return studentName;
-    }
-
-    public LocalTime getArrivalTimeBusStop() {
-        return arrivalTimeBusStop;
     }
 
     @Override
     public void run() {
         try {
-            // Tempo do aluno na aula
+            // Aguarda o tempo do aluno na aula
             Thread.sleep(classTime);
 
-            // Tempo que o aluno leva até o ponto de ónibus (aleatório)
-            Thread.sleep((int) (Math.random() * 100));
+            // Aguarda o tempo que o aluno leva até o ponto de ônibus (aleatório)
+            Thread.sleep((int) (Math.random() * TIME_GO_BUS_STOP));
 
-            // Chegada do aluno no ponto de ônibus
-            this.arrivalTimeBusStop = LocalTime.now();
+            // Indica a chegada do aluno no ponto de ônibus
             busStop.arrive(this);
         } catch (InterruptedException e) {
             e.printStackTrace();
