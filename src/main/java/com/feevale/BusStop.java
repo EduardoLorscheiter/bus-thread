@@ -25,20 +25,27 @@ public class BusStop {
     // Chegada do aluno na fila para pegar o ônibus
     public synchronized void arrive(Student student) {
         studentsQueue.add(student);
-        System.out.println(student.getStudentName() + " chegou no ponto. Total esperando = " + studentsQueue.size());
+        System.out.println("Aluno(a) " + student.getStudentIdentification() + " chegou no ponto. " + totallyWaiting());
     }
 
     // Chegada do ônibus na parada e embarque de alunos até a capacidade máxima
     public synchronized void board(Bus bus) {
+        System.out.println("Ônibus " + bus.getIdBus() + " chegou no ponto.");
+
         int capacity = bus.getCapacity();
         int boarded = 0;
 
-        // Enquanto possuir alunos na fila e não lotou o ônibus
+        // Percorre a lista enquanto possuir alunos na fila e não lotou o ônibus
         while (!studentsQueue.isEmpty() && boarded < capacity) {
-            Student aluno = studentsQueue.poll();
-            System.out.println("Ônibus " + bus.getIdBus() + ": " + aluno.getStudentName()
-                    + " embarcou. Total esperando = " + studentsQueue.size());
+            Student student = studentsQueue.poll();
+            System.out.println("Ônibus " + bus.getIdBus() + ": " + student.getStudentIdentification()
+                    + " embarcou. " + totallyWaiting());
             boarded++;
+
+            // Notifica o aluno (thread) de que ele embarcou
+            synchronized (student) {
+                student.notify();
+            }
         }
 
         // Se nenhum aluno embarcou
@@ -47,5 +54,9 @@ public class BusStop {
         } else {
             System.out.println("Ônibus " + bus.getIdBus() + " partiu com " + boarded + " alunos.");
         }
+    }
+
+    private String totallyWaiting() {
+        return "Total esperando = " + studentsQueue.size();
     }
 }

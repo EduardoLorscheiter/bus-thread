@@ -31,7 +31,7 @@ public class Bus extends Thread {
 
     @Override
     public void run() {
-        System.out.println("Ônibus " + idBus + " chegou no ponto.");
+        // Indica a chegada do ônibus no ponto de ônibus
         busStop.board(this);
     }
 }

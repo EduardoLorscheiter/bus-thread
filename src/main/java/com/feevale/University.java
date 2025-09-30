@@ -19,7 +19,7 @@ public class University {
     // Número mínimo e máximo de salas da Universidade
     private static final int NUM_CLASSROOMS_MIN = 1;
     private static final int NUM_CLASSROOMS_MAX = 10;
-    // Número mínimo e máximo de autos por sala da Universidade
+    // Número mínimo e máximo de alunos por sala da Universidade
     private static final int NUM_STUDENTS_MIN = 10;
     private static final int NUM_STUDENTS_MAX = 30;
     // Tempo mínimo e máximo de aula por sala da Universidade (milissegundo)
@@ -43,13 +43,7 @@ public class University {
         System.out.println(">>> Fim da simulação de " + NUM_DAYS + " dias <<<");
     }
 
-    /**
-     * Simula um dia de aulas, alunos indo ao ponto e ônibus circulando
-     * 
-     * @param day
-     * @param busStop
-     * @throws InterruptedException
-     */
+    // Simula um dia de aulas, alunos indo ao ponto e ônibus circulando
     private static void simulateDay(Integer day, BusStop busStop) throws InterruptedException {
         System.out.println("\n===== Início do dia " + day + " =====");
 
@@ -72,7 +66,7 @@ public class University {
 
             // Cria e dispara a thread para cada um dos aluno
             for (int i = 0; i < numberStudentsClassroom; i++) {
-                Student aluno = new Student("S" + room + "-M" + i, "Aluno-" + i + " (Sala " + room + ")", classTime,
+                Student aluno = new Student("S" + room + "-M" + i, "Aluno-" + i, "Sala " + room, classTime,
                         busStop);
                 aluno.start();
                 totalNumberStudents++;
@@ -96,14 +90,7 @@ public class University {
         System.out.println("===== Fim do dia " + day + " =====\n");
     }
 
-    /**
-     * Gera um novo ônibus
-     * 
-     * @param idBus
-     * @param busStop
-     * @return 
-     * @throws InterruptedException
-     */
+    // Gera um novo ônibus
     private static int generateBus(int idBus, BusStop busStop) throws InterruptedException {
         Bus bus = new Bus(idBus++, busStop);
         bus.start();
