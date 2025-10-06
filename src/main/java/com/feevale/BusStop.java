@@ -15,6 +15,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class BusStop {
+    // Lista dos alunos
     private final Queue<Student> studentsQueue = new LinkedList<>();
 
     // Verifica se ainda há alunos na fila
@@ -25,7 +26,7 @@ public class BusStop {
     // Chegada do aluno na fila para pegar o ônibus
     public synchronized void arrive(Student student) {
         studentsQueue.add(student);
-        System.out.println("Aluno(a) " + student.getStudentIdentification() + " chegou no ponto. " + totallyWaiting());
+        System.out.println(student.getStudentIdentification() + " chegou no ponto. " + totallyWaiting());
     }
 
     // Chegada do ônibus na parada e embarque de alunos até a capacidade máxima
@@ -42,7 +43,7 @@ public class BusStop {
                     + " embarcou. " + totallyWaiting());
             boarded++;
 
-            // Notifica o aluno (thread) de que ele embarcou
+            // Notifica que o aluno embarcou
             synchronized (student) {
                 student.notify();
             }

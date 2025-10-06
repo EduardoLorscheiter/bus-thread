@@ -11,12 +11,22 @@
 
 package com.feevale;
 
+import java.util.Random;
+
 public class Student extends Thread {
-    private static final int TIME_GO_BUS_STOP = 100;
+    // Tempo mínimo e máximo da chegada dos alunos até a parada de ônibus (milissegundo)
+    private static final int TIME_GO_BUS_STOP_MIN = 30000;
+    private static final int TIME_GO_BUS_STOP_MAX = 600000;
+    // Nome do estudante
     private String studentName;
+    // Sala de aula do aluno
     private String classRoom;
+    // Tempo de aula de todas as salas
     private Integer classTime;
+    // Indica se o aluno está na parada de ônibus
     private BusStop busStop;
+    // Gerador de números aleatórios
+    private static final Random random = new Random();
 
     public Student(String idStudent, String studentName, String classRoom, Integer classTime, BusStop busStop) {
         super(idStudent);
@@ -34,7 +44,7 @@ public class Student extends Thread {
         return classRoom;
     }
 
-    public String getStudentIdentification(){
+    public String getStudentIdentification() {
         return studentName + " (" + classRoom + ")";
     }
 
@@ -45,7 +55,7 @@ public class Student extends Thread {
             Thread.sleep(classTime);
 
             // Aguarda o tempo que o aluno leva até o ponto de ônibus (aleatório)
-            Thread.sleep((int) (Math.random() * TIME_GO_BUS_STOP));
+            Thread.sleep(random.nextInt(TIME_GO_BUS_STOP_MAX - TIME_GO_BUS_STOP_MIN + 1) + TIME_GO_BUS_STOP_MIN);
 
             synchronized (this) {
                 // Indica a chegada do aluno no ponto de ônibus
