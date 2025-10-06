@@ -16,19 +16,18 @@ import java.util.Random;
 public class University {
     // Número de dias da simulação
     private static final int NUM_DAYS = 3;
-    // Número mínimo e máximo de salas da Universidade
-    private static final int NUM_CLASSROOMS_MIN = 1;
+    // Número mínimo e máximo de salas da Universidade Feevale
+    private static final int NUM_CLASSROOMS_MIN = 5;
     private static final int NUM_CLASSROOMS_MAX = 10;
-    // Número mínimo e máximo de alunos por sala da Universidade
+    // Número mínimo e máximo de alunos por sala da Universidade Feevale
     private static final int NUM_STUDENTS_MIN = 10;
     private static final int NUM_STUDENTS_MAX = 30;
-    // Tempo mínimo e máximo de aula por sala da Universidade (milissegundo)
-    private static final int TIME_CLASSES_MIN = 2000;
-    private static final int TIME_CLASSES_MAX = 10000;
-    // Tempo mínimo e máximo por chegada de ônibus na Universidade (milissegundo)
-    private static final int TIME_BUS_MIN = 2000;
-    private static final int TIME_BUS_MAX = 3000;
-
+    // Tempo mínimo e máximo de aula de todas as salas da Universidade Feevale (milissegundo)
+    private static final int TIME_CLASSES_MIN = 120000;
+    private static final int TIME_CLASSES_MAX = 600000;
+    // Tempo mínimo e máximo do intervalo para enviar o próximo ônibus na Universidade Feevale (milissegundo)
+    private static final int TIME_BUS_MIN = 120000;
+    private static final int TIME_BUS_MAX = 180000;
     // Gerador de números aleatórios
     private static final Random random = new Random();
 
@@ -54,7 +53,7 @@ public class University {
         // Converte o tempo em milissegundos para minutos (com casas decimais)
         double classTimeMinutes = classTime / 60000.0;
 
-        System.out.printf("Universidade criada com %d salas e aulas de %.2f minutos (%d ms).%n",
+        System.out.printf("Universidade Feevale criada com %d salas e aulas de %.2f minutos (%d ms).%n",
                 numberRooms, classTimeMinutes, classTime);
 
         int totalNumberStudents = 0;
@@ -64,16 +63,15 @@ public class University {
             int numberStudentsClassroom = random.nextInt(NUM_STUDENTS_MAX - NUM_STUDENTS_MIN + 1) + NUM_STUDENTS_MIN;
             System.out.println("Sala " + room + " terá " + numberStudentsClassroom + " alunos.");
 
-            // Cria e dispara a thread para cada um dos aluno
+            // Cria e dispara a thread para cada um dos alunos
             for (int i = 0; i < numberStudentsClassroom; i++) {
-                Student aluno = new Student("S" + room + "-M" + i, "Aluno-" + i, "Sala " + room, classTime,
-                        busStop);
+                Student aluno = new Student("S" + room + "-M" + i, "Aluno-" + i, "Sala " + room, classTime, busStop);
                 aluno.start();
                 totalNumberStudents++;
             }
         }
 
-        System.out.println("Total de alunos na universidade: " + totalNumberStudents);
+        System.out.println("Total de alunos na universidade Feevale: " + totalNumberStudents);
 
         // Gera ônibus até o fim das aulas
         int idBus = 1;
@@ -92,9 +90,9 @@ public class University {
 
     // Gera um novo ônibus
     private static int generateBus(int idBus, BusStop busStop) throws InterruptedException {
+        Thread.sleep(random.nextInt(TIME_BUS_MAX - TIME_BUS_MIN + 1) + TIME_BUS_MIN);
         Bus bus = new Bus(idBus++, busStop);
         bus.start();
-        Thread.sleep(random.nextInt(TIME_BUS_MAX - TIME_BUS_MIN + 1) + TIME_BUS_MIN);
         return idBus;
     }
 }

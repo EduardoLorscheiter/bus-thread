@@ -12,9 +12,16 @@
 package com.feevale;
 
 public class Bus extends Thread {
+    // Capacidade máxima do ônibus
     private static final int CAPACITY = 50;
+    // Identificador único do ônibus
     private final int idBus;
+    // Indica que o ônibus chegou na parada de ônibus
     private final BusStop busStop;
+    // Tempo do embarque dos alunos no ônibus
+    private Integer timeBoarding;
+    // Indica se o ônibus está em embarque
+    private Boolean onBoarding;
 
     public Bus(int idBus, BusStop busStop) {
         this.idBus = idBus;
