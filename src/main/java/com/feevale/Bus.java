@@ -3,7 +3,7 @@
 **  @file    Bus.java
 **  @author  Eduardo Lorscheiter e Loreno Enrique Ribeiro
 **  @class   Processamento Paralelo
-**  @date    Setembro/2025
+**  @date    Outubro/2025
 **  @version 1.0
 **  @brief   Trabalho Prático 1 - Threads
 **===========================================================================
@@ -16,12 +16,8 @@ public class Bus extends Thread {
     private static final int CAPACITY = 50;
     // Identificador único do ônibus
     private final int idBus;
-    // Indica que o ônibus chegou na parada de ônibus
+    // Parada de ônibus da Universidade Feevale
     private final BusStop busStop;
-    // Tempo do embarque dos alunos no ônibus
-    private Integer timeBoarding;
-    // Indica se o ônibus está em embarque
-    private Boolean onBoarding;
 
     public Bus(int idBus, BusStop busStop) {
         this.idBus = idBus;

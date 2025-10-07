@@ -3,7 +3,7 @@
 **  @file    Student.java
 **  @author  Eduardo Lorscheiter e Loreno Enrique Ribeiro
 **  @class   Processamento Paralelo
-**  @date    Setembro/2025
+**  @date    Outubro/2025
 **  @version 1.0
 **  @brief   Trabalho Prático 1 - Threads
 **===========================================================================
@@ -11,24 +11,22 @@
 
 package com.feevale;
 
-import java.util.Random;
+import com.feevale.utils.RandomUtils;
 
 public class Student extends Thread {
-    // Tempo mínimo e máximo da chegada dos alunos até a parada de ônibus (milissegundo)
-    private static final int TIME_GO_BUS_STOP_MIN = 30000;
-    private static final int TIME_GO_BUS_STOP_MAX = 600000;
-    // Nome do estudante
+    // Tempo mínimo e máximo de ida dos alunos até a parada de ônibus (milissegundos)
+    private static final long TIME_GO_BUS_STOP_MIN = 30000;  // (30.000 ms = 0.5 min)
+    private static final long TIME_GO_BUS_STOP_MAX = 600000; // (600.000 ms = 10 min)
+    // Nome do aluno
     private String studentName;
     // Sala de aula do aluno
     private String classRoom;
     // Tempo de aula de todas as salas
-    private Integer classTime;
-    // Indica se o aluno está na parada de ônibus
+    private long classTime;
+    // Parada de ônibus da Universidade Feevale
     private BusStop busStop;
-    // Gerador de números aleatórios
-    private static final Random random = new Random();
 
-    public Student(String idStudent, String studentName, String classRoom, Integer classTime, BusStop busStop) {
+    public Student(String idStudent, String studentName, String classRoom, long classTime, BusStop busStop) {
         super(idStudent);
         this.studentName = studentName;
         this.classRoom = classRoom;
@@ -55,7 +53,7 @@ public class Student extends Thread {
             Thread.sleep(classTime);
 
             // Aguarda o tempo que o aluno leva até o ponto de ônibus (aleatório)
-            Thread.sleep(random.nextInt(TIME_GO_BUS_STOP_MAX - TIME_GO_BUS_STOP_MIN + 1) + TIME_GO_BUS_STOP_MIN);
+            Thread.sleep(RandomUtils.randomMillis(TIME_GO_BUS_STOP_MIN, TIME_GO_BUS_STOP_MAX));
 
             synchronized (this) {
                 // Indica a chegada do aluno no ponto de ônibus
