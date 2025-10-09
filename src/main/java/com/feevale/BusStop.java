@@ -11,17 +11,22 @@
 
 package com.feevale;
 
-import com.feevale.utils.RandomUtils;
-
 import java.util.LinkedList;
 import java.util.Queue;
 
 public class BusStop {
-    // Tempo mínimo e máximo para embarque de um aluno (em milissegundos)
-    private static final long TIME_BOARDING_MIN = 1000; // (1.000 ms = 1 s)
-    private static final long TIME_BOARDING_MAX = 5000; // (5.000 ms = 5 s)
+    // Tempo para embarque de um aluno (em milissegundos)
+    private static final long TIME_BOARDING_STUDENT = 1000; // (1.000 ms = 1 s)
     // Lista dos alunos
     private final Queue<Student> studentsQueue = new LinkedList<>();
+
+    // Número total de alunos que embarcaram em algum ônibus
+    private int studentsBoarded = 0;
+
+    // Retorna o número total de alunos que embarcaram em algum ônibus
+    public int studentsBoarded() {
+        return studentsBoarded;
+    }
 
     // Chegada do aluno na fila para pegar o ônibus
     public synchronized void arrive(Student student) {
@@ -39,20 +44,18 @@ public class BusStop {
         // Percorre a lista enquanto possuir alunos na fila e não lotou o ônibus
         while (!studentsQueue.isEmpty() && boarded < capacity) {
             Student student = studentsQueue.poll();
+            studentsBoarded++;
+            boarded++;
 
-            System.out.println("Ônibus " + bus.getIdBus() + ": " + student.getStudentIdentification()
-                    + " embarcando...");
             try {
                 // Simula o tempo de embarque do aluno
-                long boardingTime = RandomUtils.randomMillis(TIME_BOARDING_MIN, TIME_BOARDING_MAX);
-                Thread.sleep(boardingTime);
+                Thread.sleep(TIME_BOARDING_STUDENT);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
 
             System.out.println("Ônibus " + bus.getIdBus() + ": " + student.getStudentIdentification()
                     + " embarcou. " + status());
-            boarded++;
 
             // Notifica que o aluno embarcou
             synchronized (student) {
@@ -72,6 +75,6 @@ public class BusStop {
      * Exibe o status atual
      */
     private String status() {
-        return "Total esperando = " + studentsQueue.size();
+        return "Total esperando = " + studentsQueue.size() + " | Total embarcado = " + studentsBoarded;
     }
 }

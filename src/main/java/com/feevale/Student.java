@@ -15,7 +15,7 @@ import com.feevale.utils.RandomUtils;
 
 public class Student extends Thread {
     // Tempo mínimo e máximo de ida dos alunos até a parada de ônibus (milissegundos)
-    private static final long TIME_GO_BUS_STOP_MIN = 30000;  // (30.000 ms = 0.5 min)
+    private static final long TIME_GO_BUS_STOP_MIN = 30000;  // (30.000 ms = 30 s)
     private static final long TIME_GO_BUS_STOP_MAX = 600000; // (600.000 ms = 10 min)
     // Nome do aluno
     private String studentName;

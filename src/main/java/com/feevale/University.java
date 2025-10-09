@@ -14,10 +14,8 @@ package com.feevale;
 import com.feevale.utils.RandomUtils;
 
 public class University {
-    // Número de dias da simulação
-    private static final int NUM_DAYS = 1;
     // Número mínimo e máximo de salas da Universidade Feevale
-    private static final int NUM_CLASSROOMS_MIN = 1;
+    private static final int NUM_CLASSROOMS_MIN = 5;
     private static final int NUM_CLASSROOMS_MAX = 10;
     // Número mínimo e máximo de alunos por sala na Universidade Feevale
     private static final int NUM_STUDENTS_MIN = 10;
@@ -28,17 +26,39 @@ public class University {
     // Tempo mínimo e máximo de novo ônibus na Universidade Feevale (milissegundos)
     private static final long TIME_BUS_ARRIVE_MIN = 120000; // (120.000 ms = 2 min)
     private static final long TIME_BUS_ARRIVE_MAX = 180000; // (180.000 ms = 3 min)
-    // Tempo máximo de circulação dos ônibus na Universidade Feevale (milissegundos)
-    private static final long TIME_BUS_CIRCULATION_MAX = 900000; // (900.000 ms = 15 min)
+
+    // Número total de alunos na Universidade Feevale
+    private static int studentsAtUniversity = 0;
 
     public static void main(String[] args) throws InterruptedException {
-        printBanner("Simulação de " + NUM_DAYS + " dia(s) iniciada");
+        simulateDayClass();
+    }
 
-        for (int day = 1; day <= NUM_DAYS; day++) {
-            simulateDay(day);
-        }
+    /**
+     * Simula um dia de aulas, alunos indo ao ponto e ônibus circulando
+     */
+    private static void simulateDayClass() throws InterruptedException {
+        printBanner("Simulação de um dia de aulas na Universidade Feevale iniciada");
 
-        printBanner("Simulação de " + NUM_DAYS + " dia(s) encerrada");
+        // Parada de ônibus da Universidade Feevale
+        BusStop busStop = new BusStop();
+
+        // Gera um número aleatório de salas de aula
+        int numberRooms = RandomUtils.randomInt(NUM_CLASSROOMS_MIN, NUM_CLASSROOMS_MAX);
+        // Gera um tempo (em milissegundos) aleatório para as aulas
+        long classTime = RandomUtils.randomMillis(TIME_CLASSES_MIN, TIME_CLASSES_MAX);
+
+        System.out.printf("\nUniversidade Feevale criada com %d sala(s) e aulas de %.2f minutos (%d ms).\n",
+                numberRooms, classTime / 60000.0, classTime);
+
+        // Gera todas as salas de aula da Universidade Feevale e seus alunos
+        generateStudents(numberRooms, classTime, busStop);
+        // Aguarda o final das aulas
+        waitForClassEnd(classTime);
+        // Gera todos os ônibus por um tempo determinado
+        runBusCirculation(busStop);
+
+        printBanner("Simulação de um dia de aulas na Universidade Feevale encerrada");
     }
 
     /**
@@ -47,7 +67,7 @@ public class University {
      * @param message
      */
     private static void printBanner(String message) {
-        // número de sinais > ou < ao redor da mensagem
+        // Número de sinais > ou < ao redor da mensagem
         int padding = 5;
         int totalLength = message.length() + padding * 2 + 2;
 
@@ -63,35 +83,6 @@ public class University {
     }
 
     /**
-     * Simula um dia de aulas, alunos indo ao ponto e ônibus circulando
-     *
-     * @param day Dia da simulação
-     */
-    private static void simulateDay(Integer day) throws InterruptedException {
-        System.out.println("\n===== Dia " + day + " iniciado =====");
-
-        // Parada de ônibus da Universidade Feevale
-        BusStop busStop = new BusStop();
-
-        // Gera um número aleatório de salas de aula
-        int numberRooms = RandomUtils.randomInt(NUM_CLASSROOMS_MIN, NUM_CLASSROOMS_MAX);
-        // Gera um tempo (em milissegundos) aleatório para as aulas
-        long classTime = RandomUtils.randomMillis(TIME_CLASSES_MIN, TIME_CLASSES_MAX);
-
-        System.out.printf("Universidade Feevale criada com %d sala(s) e aulas de %.2f minutos (%d ms).\n",
-                numberRooms, millisToMinutes(classTime), classTime);
-
-        // Gera todas as salas de aula da Universidade Feevale e seus alunos
-        generateStudents(numberRooms, classTime, busStop);
-        // Aguarda o final das aulas
-        waitForClassEnd(classTime);
-        // Gera todos os ônibus por um tempo determinado
-        runBusCirculation(busStop);
-
-        System.out.println("===== Dia " + day + " finalizado =====\n");
-    }
-
-    /**
      * Gera todas as salas de aula da Universidade Feevale e seus alunos
      *
      * @param numberRooms Número de salas de aula
@@ -99,8 +90,6 @@ public class University {
      * @param busStop     Parada de ônibus da Universidade Feevale
      */
     private static void generateStudents(int numberRooms, long classTime, BusStop busStop) {
-        int totalStudents = 0;
-
         // Gera, para cada sala, um número aleatório de alunos
         for (int room = 1; room <= numberRooms; room++) {
             int studentsInRoom = RandomUtils.randomInt(NUM_STUDENTS_MIN, NUM_STUDENTS_MAX);
@@ -109,19 +98,29 @@ public class University {
             // Cria e dispara a thread para cada um dos alunos
             for (int studentInRoom = 0; studentInRoom < studentsInRoom; studentInRoom++) {
                 String idStudent = "S" + room + "-A" + studentInRoom;
-                String studentName = "Aluno-" + studentInRoom;
-                String classRoom = "Sala " + room;
+                String studentName;
+                if (studentInRoom < 10) {
+                    studentName = "Aluno-0" + studentInRoom;
+                } else {
+                    studentName = "Aluno-" + studentInRoom;
+                }
+                String classRoom;
+                if (numberRooms < 10) {
+                    classRoom = "Sala 0" + room;
+                } else {
+                    classRoom = "Sala " + room;
+                }
                 Student student = new Student(idStudent,
                         studentName,
                         classRoom,
                         classTime,
                         busStop);
                 student.start();
-                totalStudents++;
+                studentsAtUniversity++;
             }
         }
 
-        System.out.println("Total de alunos na universidade Feevale: " + totalStudents);
+        System.out.println("Total de alunos na universidade Feevale: " + studentsAtUniversity);
     }
 
     /**
@@ -167,29 +166,16 @@ public class University {
      * @param busStop Parada de ônibus da Universidade Feevale
      */
     private static void runBusCirculation(BusStop busStop) throws InterruptedException {
-        System.out.printf(">>> Circulação de ônibus por %.2f minutos iniciada...\n",
-                millisToMinutes(TIME_BUS_CIRCULATION_MAX));
+        System.out.println(">>> Circulação de ônibus iniciada...");
 
         int idBus = 1;
-        long endTime = System.currentTimeMillis() + TIME_BUS_CIRCULATION_MAX;
-
-        while (System.currentTimeMillis() < endTime) {
+        // Gera ônibus enquanto houver alunos na Universidade Feevale
+        while (studentsAtUniversity > busStop.studentsBoarded()) {
             Thread.sleep(RandomUtils.randomMillis(TIME_BUS_ARRIVE_MIN, TIME_BUS_ARRIVE_MAX));
             Bus bus = new Bus(idBus++, busStop);
             bus.start();
         }
 
         System.out.println(">>> Circulação de ônibus encerrada...");
-    }
-
-    /**
-     * Converte milissegundos para minutos
-     *
-     * @param millis Tempo em milissegundos
-     * @return Tempo em minutos
-     */
-    private static double millisToMinutes(long millis) {
-        // 60.000 ms = 1 min
-        return millis / 60000.0;
     }
 }
