@@ -11,6 +11,9 @@
 
 package com.feevale;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.feevale.utils.RandomUtils;
 
 public class University {
@@ -39,6 +42,7 @@ public class University {
      */
     private static void simulateDayClass() throws InterruptedException {
         printBanner("Simulação de um dia de aulas na Universidade Feevale iniciada");
+        System.out.println();
 
         // Parada de ônibus da Universidade Feevale
         BusStop busStop = new BusStop();
@@ -48,7 +52,7 @@ public class University {
         // Gera um tempo (em milissegundos) aleatório para as aulas
         long classTime = RandomUtils.randomMillis(TIME_CLASSES_MIN, TIME_CLASSES_MAX);
 
-        System.out.printf("\nUniversidade Feevale criada com %d sala(s) e aulas de %.2f minutos (%d ms).\n",
+        System.out.printf("Universidade Feevale criada com %d sala(s) e aulas de %.2f minutos (%d ms).\n",
                 numberRooms, classTime / 60000.0, classTime);
 
         // Gera todas as salas de aula da Universidade Feevale e seus alunos
@@ -58,6 +62,7 @@ public class University {
         // Gera todos os ônibus por um tempo determinado
         runBusCirculation(busStop);
 
+        System.out.println();
         printBanner("Simulação de um dia de aulas na Universidade Feevale encerrada");
     }
 
@@ -168,12 +173,27 @@ public class University {
     private static void runBusCirculation(BusStop busStop) throws InterruptedException {
         System.out.println(">>> Circulação de ônibus iniciada...");
 
+        List<Bus> busList = new ArrayList<>();
         int idBus = 1;
-        // Gera ônibus enquanto houver alunos na Universidade Feevale
-        while (studentsAtUniversity > busStop.studentsBoarded()) {
+
+        while (true) {
+            // Aguarda o tempo até o próximo ônibus
             Thread.sleep(RandomUtils.randomMillis(TIME_BUS_ARRIVE_MIN, TIME_BUS_ARRIVE_MAX));
+
+            // Se todos os alunos na Universidade Feevale já embarcaram
+            if (busStop.studentsBoarded() >= studentsAtUniversity) {
+                break;
+            }
+
+            // Gera um novo ônibus
             Bus bus = new Bus(idBus++, busStop);
             bus.start();
+            busList.add(bus);
+        }
+
+        // Espera todos os ônibus terminarem
+        for (Bus bus : busList) {
+            bus.join();
         }
 
         System.out.println(">>> Circulação de ônibus encerrada...");
