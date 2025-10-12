@@ -29,7 +29,6 @@ public class University {
     // Tempo mínimo e máximo de novo ônibus na Universidade Feevale (milissegundos)
     private static final long TIME_BUS_ARRIVE_MIN = 120000; // (120.000 ms = 2 min)
     private static final long TIME_BUS_ARRIVE_MAX = 180000; // (180.000 ms = 3 min)
-
     // Número total de alunos na Universidade Feevale
     private static int studentsAtUniversity = 0;
 
@@ -41,7 +40,7 @@ public class University {
      * Simula um dia de aulas, alunos indo ao ponto e ônibus circulando
      */
     private static void simulateDayClass() throws InterruptedException {
-        printBanner("Simulação de um dia de aulas na Universidade Feevale iniciada");
+        printBanner("Simulação de um dia de aulas na Universidade Feevale - Iniciada");
         System.out.println();
 
         // Parada de ônibus da Universidade Feevale
@@ -51,9 +50,13 @@ public class University {
         int numberRooms = RandomUtils.randomInt(NUM_CLASSROOMS_MIN, NUM_CLASSROOMS_MAX);
         // Gera um tempo (em milissegundos) aleatório para as aulas
         long classTime = RandomUtils.randomMillis(TIME_CLASSES_MIN, TIME_CLASSES_MAX);
+        // Converte o tempo da aula de milissegundos para minutos e segundos
+        long totalSeconds = classTime / 1000;
+        long minutes = totalSeconds / 60;
+        long seconds = totalSeconds % 60;
 
-        System.out.printf("Universidade Feevale criada com %d sala(s) e aulas de %.2f minutos (%d ms).\n",
-                numberRooms, classTime / 60000.0, classTime);
+        System.out.printf("Universidade Feevale criada com %d sala(s) e aulas de %02d:%02d minutos (%d ms).\n",
+                numberRooms, minutes, seconds, classTime);
 
         // Gera todas as salas de aula da Universidade Feevale e seus alunos
         generateStudents(numberRooms, classTime, busStop);
@@ -63,7 +66,7 @@ public class University {
         runBusCirculation(busStop);
 
         System.out.println();
-        printBanner("Simulação de um dia de aulas na Universidade Feevale encerrada");
+        printBanner("Simulação de um dia de aulas na Universidade Feevale - Encerrada");
     }
 
     /**
@@ -101,7 +104,7 @@ public class University {
             System.out.println("Sala " + room + " terá " + studentsInRoom + " alunos.");
 
             // Cria e dispara a thread para cada um dos alunos
-            for (int studentInRoom = 0; studentInRoom < studentsInRoom; studentInRoom++) {
+            for (int studentInRoom = 1; studentInRoom <= studentsInRoom; studentInRoom++) {
                 String idStudent = "S" + room + "-A" + studentInRoom;
                 String studentName;
                 if (studentInRoom < 10) {
