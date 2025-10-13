@@ -26,7 +26,7 @@ public class University {
     // Tempo mínimo e máximo de aula na Universidade Feevale (milissegundos)
     private static final long TIME_CLASSES_MIN = 120000; // (120.000 ms = 2 min)
     private static final long TIME_CLASSES_MAX = 600000; // (600.000 ms = 10 min)
-    // Tempo mínimo e máximo de novo ônibus na Universidade Feevale (milissegundos)
+    // Tempo mínimo e máximo de chegada de ônibus na Universidade Feevale (milissegundos)
     private static final long TIME_BUS_ARRIVE_MIN = 120000; // (120.000 ms = 2 min)
     private static final long TIME_BUS_ARRIVE_MAX = 180000; // (180.000 ms = 3 min)
     // Número total de alunos na Universidade Feevale
@@ -62,7 +62,7 @@ public class University {
         generateStudents(numberRooms, classTime, busStop);
         // Aguarda o final das aulas
         waitForClassEnd(classTime);
-        // Gera todos os ônibus por um tempo determinado
+        // Gera todos os ônibus até que não haja mais alunos na Universidade Feevale
         runBusCirculation(busStop);
 
         System.out.println();
@@ -169,7 +169,7 @@ public class University {
     }
 
     /**
-     * Gera todos os ônibus por um tempo determinado
+     * Gera todos os ônibus até que não haja mais alunos na Universidade Feevale
      *
      * @param busStop Parada de ônibus da Universidade Feevale
      */
@@ -180,7 +180,10 @@ public class University {
         int idBus = 1;
 
         while (true) {
-            // Aguarda o tempo até o próximo ônibus
+            // Gera um novo ônibus
+            Bus bus = new Bus(idBus++, busStop);
+
+            // Aguarda o tempo até a chegada do ônibus
             Thread.sleep(RandomUtils.randomMillis(TIME_BUS_ARRIVE_MIN, TIME_BUS_ARRIVE_MAX));
 
             // Se todos os alunos na Universidade Feevale já embarcaram
@@ -188,8 +191,8 @@ public class University {
                 break;
             }
 
-            // Gera um novo ônibus
-            Bus bus = new Bus(idBus++, busStop);
+            // Dispara a thread do ônibus
+            // Obs.: Realiza o embarque dos alunos que já estão na fila
             bus.start();
             busList.add(bus);
         }

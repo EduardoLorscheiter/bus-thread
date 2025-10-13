@@ -34,13 +34,11 @@ public class BusStop {
         synchronized (studentsQueue) {
             studentsQueue.add(student);
 
+            String message = student.getStudentIdentification() + " chegou no ponto";
             if (busBoarding) {
-                // Mensagem exibida quando o aluno chega durante o embarque
-                System.out.println(student.getStudentIdentification()
-                        + " chegou no ponto durante o embarque, o aluno vai esperar o próximo ônibus. " + status());
-            } else {
-                System.out.println(student.getStudentIdentification() + " chegou no ponto. " + status());
+                message += " durante o embarque e vai esperar o próximo ônibus";
             }
+            System.out.println(message + ". " + status());
         }
     }
 
@@ -50,10 +48,10 @@ public class BusStop {
 
         // Capacidade máxima do ônibus
         int capacity = bus.getCapacity();
-        // Número total de alunos que embarcaram no ônibus atual
-        int boarded = 0;
         // Quantidade de alunos na parada no momento da chegada do ônibus
         int studentsAtBusStop;
+        // Número total de alunos que embarcaram no ônibus atual
+        int boarded = 0;
 
         synchronized (studentsQueue) {
             studentsAtBusStop = Math.min(studentsQueue.size(), capacity);
@@ -61,7 +59,7 @@ public class BusStop {
         }
 
         // Realiza o embarque dos alunos que já estavam na parada quando o ônibus chegou
-        for (int i = 0; i < studentsAtBusStop; i++) {
+        for (int studentAtBusStop = 0; studentAtBusStop < studentsAtBusStop; studentAtBusStop++) {
             Student student;
 
             synchronized (studentsQueue) {
@@ -86,7 +84,9 @@ public class BusStop {
             }
         }
 
-        busBoarding = false;
+        synchronized (studentsQueue) {
+            busBoarding = false;
+        }
 
         // Se nenhum aluno embarcou
         if (boarded == 0) {
